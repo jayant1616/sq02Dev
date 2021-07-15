@@ -1,29 +1,32 @@
 {
     "nodes": {
       "start": {
-          "reply": "Source and start node of the Graph",
-          "children" : { "yes": "a" }
+          "reply": "Narrator, Mr.Shark",
+          "children" : { "I don't know": "a" }
       },
 
       "a": {
-          "reply": "a Reply, say yes or no",
-          "children" : {"yes":"b", "no":"d", "yeah":"b" }
+          "reply": "Mr.Shark",
+          "children" : {"Mediterranean  Sea":"b", "Red sea":"d", "Arabian Sea":"b" }
       },
       "b": {
-          "reply" : "b Reply , say yes or no",
+          "reply" : "Mr.Shark",
           "children" : {"yes": "c", "no": "d"}
       },
       "c": {
-          "reply": "c Reply , say yes or no",
+          "reply": "Cole, Mr.Shark",
           "children": {"yes": "d", "no": "a"}
       },
       "d":{
-        "reply": "d reply, say yes or no",
+        "reply": "Cole, Mr.Shark",
         "children" : {"yes": "a", "no": "b"}
-
+         },
+        "e" : {
+            "reply" : "End of quiz",
+            "children" : {"exit" : null}
         }
     },
    
-    "listOfNode" : ["start","a","b","c","d"]
+    "listOfNode" : ["start","a","b","c","d","e"]
   
   }
