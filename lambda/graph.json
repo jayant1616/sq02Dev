@@ -7,19 +7,19 @@
 
       "a": {
           "reply": "Mr.Shark",
-          "children" : {"Mediterranean  Sea":"b", "Red sea":"d", "Arabian Sea":"b" }
+          "children" : {"Mediterranean  Sea":"b", "Red sea":"c", "Arabian Sea":"d" }
       },
       "b": {
           "reply" : "Mr.Shark",
-          "children" : {"yes": "c", "no": "d"}
+          "children" : {"exit": "e"}
       },
       "c": {
           "reply": "Cole, Mr.Shark",
-          "children": {"yes": "d", "no": "a"}
+          "children": {"exit": "e"}
       },
       "d":{
         "reply": "Cole, Mr.Shark",
-        "children" : {"yes": "a", "no": "b"}
+        "children" : {"exit": "e"}
          },
         "e" : {
             "reply" : "End of quiz",
