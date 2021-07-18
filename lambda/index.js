@@ -4,6 +4,10 @@
 const Alexa = require('ask-sdk-core');
 const DAG = require('./graph.json');
 const GraphCrawler = require('./GraphCrawler');
+const lastNode = require('./model.js');
+const connectMongo = require('./connection');
+let startNode;
+let lastVisitedNode;
 
 //Global Graph Object for the User :
 let Graph ;
@@ -14,8 +18,18 @@ const LaunchRequestHandler = {
     },
     handle(handlerInput) {
         const speakOutput = 'Welcome, you can say Hello or Help. Which would you like to try?';
-        //Graph Object Instantiated: 
-        Graph = new GraphCrawler(DAG);
+        connectMongo.connect();
+        let Username = ;//we have to figure this out
+        lastNode.findOne({Username:Username}).then(function(node){
+            if(node.Nodename === 'firstTime' || node.Nodename === 'e'){
+                Graph = new GraphCrawler(DAG);
+                startNode = 'a';
+            }  
+            else{
+                startnode = node.Nodename;
+            } 
+        });
+              
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakOutput)
@@ -37,8 +51,17 @@ const GraphInterceptor = {
         
         //The Graph next() method is called along with userChoice which changes the node to the required node
         //based on the user choice:
+        let lastNodeObject;
+        lastNode.findOne({Username:Username}).then(function(node){
+            lastVisitedNode = node.Nodename;
+            lastNodeObject = node;
+        });
+
         Graph.next(userChoice);
-        return;
+
+        lastNode.save().then(function(){
+            //save the updated last node object
+        })
 
     }
 };
@@ -135,7 +158,7 @@ const IntentReflectorHandler = {
 // Generic error handling to capture any syntax or routing errors. If you receive an error
 // stating the request handler chain is not found, you have not implemented a handler for
 // the intent being invoked or included it in the skill builder below.
-const ErrorHandler = {
+const ErrorHandler = { //make this the fall back intent handler ////////////////
     canHandle() {
         return true;
     },
