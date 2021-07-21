@@ -3,13 +3,15 @@
       "a": {
           "reply": "Narrator, Mr.Shark",
           "children" : { "dont_know": "b" },
-          "isSlotType" : true
+          "isSlotType" : true,
+          "slotName" : "dont_know"
       },
 
       "b": {
           "reply": "Mr.Shark",
           "children" : {"Mediterranean  Sea":"c", "Red sea":"d", "Arabian Sea":"e" },
-          "isSlotType" : false
+          "isSlotType" : false,
+          "slotName" : "sea"
       },
       "c": {
           "reply" : "Mr.Shark",

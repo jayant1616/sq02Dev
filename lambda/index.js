@@ -1,9 +1,33 @@
 // This sample demonstrates handling intents from an Alexa skill using the Alexa Skills Kit SDK (v2).
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
+class GraphCrawler {
+
+    constructor(graph){
+        this.graph = graph;
+        this.GraphNode = graph.listOfNode[0];
+    }
+
+    next(userChoice){
+        let nodes = this.graph.nodes;
+        this.GraphNode = nodes[(this.GraphNode)].children[userChoice];
+    }
+
+    getReply(){
+        return (this.graph).nodes[(this.GraphNode)].reply;
+    }
+
+    getNode(){
+        return (this.GraphNode);
+    }
+
+}
+
+
 const Alexa = require('ask-sdk-core');
+const { ConnectContactLens } = require('aws-sdk');
 const DAG = require('./graph.json');
-const GraphCrawler = require('./GraphCrawler');
+//const GraphCrawler = require('./GraphCrawler');
 let firstTime = true;
 
 //Global Graph Object for the User :
@@ -14,6 +38,7 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
+        firstTime = true;
         const speakOutput = 'Welcome, you can say Hello or Help. Which would you like to try?';
         //Graph Object Instantiated: 
         Graph = new GraphCrawler(DAG);
@@ -33,21 +58,26 @@ const GraphInterceptor = {
         || Alexa.getIntentName(handlerInput.requestEnvelope) !== 'HelloToWorldIntent' ||
         Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest'){return;}
         
-        if(firstTime){
-            firstTime = false;
-            return;
+        try{
+            if(firstTime){
+                firstTime = false;
+                return;
+            }
+            let node = Graph.getNode();
+            let userChoice;
+            if(node.isSlotType){
+                userChoice = Alexa.getSlot(handlerInput.requestEnvelope, node.slotName);
+            }
+            else{
+                userChoice = Alexa.getSlotValue(handlerInput.requestEnvelope, node.slotName);
+            }
+            console.log('The user choice is : ', userChoice);
+            Graph.next(userChoice);
+            return; 
         }
-        let node = Graph.getNode();
-        let userChoice;
-        if(node.isSlotType){
-            userChoice = Alexa.getSlot(handlerInput.requestEnvelope);
+        catch(error){
+            console.log(error);
         }
-        else{
-            userChoice = Alexa.getSlotValue(handlerInput.requestEnvelope);
-        }
-        
-        Graph.next(userChoice);
-        return;
     }
 };
 
