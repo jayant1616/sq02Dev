@@ -1,32 +1,35 @@
 {
     "nodes": {
-      "start": {
+      "a": {
           "reply": "Narrator, Mr.Shark",
-          "children" : { "I don't know": "a" }
+          "children" : { "dont_know": "b" },
+          "isSlotType" : true
       },
 
-      "a": {
-          "reply": "Mr.Shark",
-          "children" : {"Mediterranean  Sea":"b", "Red sea":"c", "Arabian Sea":"d" }
-      },
       "b": {
-          "reply" : "Mr.Shark",
-          "children" : {"exit": "e"}
+          "reply": "Mr.Shark",
+          "children" : {"Mediterranean  Sea":"c", "Red sea":"d", "Arabian Sea":"e" },
+          "isSlotType" : false
       },
       "c": {
+          "reply" : "Mr.Shark",
+          "children" : {"exit": "e"},
+          "isSlotType" : false
+      },
+      "d": {
           "reply": "Cole, Mr.Shark",
           "children": {"exit": "e"}
       },
-      "d":{
+      "e":{
         "reply": "Cole, Mr.Shark",
         "children" : {"exit": "e"}
          },
-        "e" : {
+    "Exit" : {
             "reply" : "End of quiz",
             "children" : {"exit" : null}
         }
     },
    
-    "listOfNode" : ["start","a","b","c","d","e"]
+    "listOfNode" : ["a","b","c","d","e"]
   
   }

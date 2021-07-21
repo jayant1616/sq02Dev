@@ -14,5 +14,9 @@ export class GraphCrawler {
         return (this.graph).nodes[(this.GraphNode)].reply;
     }
 
+    getNode(){
+        return (this.GraphNode);
+    }
+
 }
 

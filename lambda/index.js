@@ -4,6 +4,7 @@
 const Alexa = require('ask-sdk-core');
 const DAG = require('./graph.json');
 const GraphCrawler = require('./GraphCrawler');
+let firstTime = true;
 
 //Global Graph Object for the User :
 let Graph ;
@@ -32,14 +33,21 @@ const GraphInterceptor = {
         || Alexa.getIntentName(handlerInput.requestEnvelope) !== 'HelloToWorldIntent' ||
         Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest'){return;}
         
-        //Get the user choice from the request :
-        let userChoice = 'yes'; //right now it's hard coded as Yes only but can be dynamically fetched from the Request
+        if(firstTime){
+            firstTime = false;
+            return;
+        }
+        let node = Graph.getNode();
+        let userChoice;
+        if(node.isSlotType){
+            userChoice = Alexa.getSlot(handlerInput.requestEnvelope);
+        }
+        else{
+            userChoice = Alexa.getSlotValue(handlerInput.requestEnvelope);
+        }
         
-        //The Graph next() method is called along with userChoice which changes the node to the required node
-        //based on the user choice:
         Graph.next(userChoice);
         return;
-
     }
 };
 
