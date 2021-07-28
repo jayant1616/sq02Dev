@@ -1,32 +1,43 @@
 {
     "nodes": {
-      "start": {
-          "reply": "Narrator, Mr.Shark",
-          "children" : { "I don't know": "a" }
+      "a": {
+          "reply": "Hello welcome to the Quiz game!, Do you want to proceed?",
+          "children" : { "proceedValue": "b" },
+          "isSlotType" : true,
+          "slotValue" : "proceedValue"
       },
 
-      "a": {
-          "reply": "Mr.Shark",
-          "children" : {"Mediterranean  Sea":"b", "Red sea":"c", "Arabian Sea":"d" }
-      },
       "b": {
-          "reply" : "Mr.Shark",
-          "children" : {"exit": "e"}
+          "reply": "Impressive you want to play!! What is the capital of India? Here are your options: New Delhi, Mumbai, Chennai",
+          "children" : {"New Delhi":"c", "Mumbai":"d", "Chennai":"e" },
+          "isSlotType" : false,
+          "slotValue" : "capValue"
       },
       "c": {
-          "reply": "Cole, Mr.Shark",
-          "children": {"exit": "e"}
+          "reply" : "Right Answer",
+          "children" : {"exit": "e"},
+          "isSlotType" : false,
+           "slotValue" : "capValue"
+          
       },
-      "d":{
-        "reply": "Cole, Mr.Shark",
-        "children" : {"exit": "e"}
+      "d": {
+          "reply": "Nope, Wrong Answer, Please say Exit to replay",
+          "children": {"exit": "e"},
+          "isSlotType": false,
+           "slotValue" : "capValue"
+      },
+      "e":{
+        "reply": "Nope, Wrong answer, Please say Exit ",
+        "children" : {"exit": "e"},
+        "isSlotType": false,
+           "slotValue" : "capValue"
          },
-        "e" : {
+    "Exit" : {
             "reply" : "End of quiz",
             "children" : {"exit" : null}
         }
     },
    
-    "listOfNode" : ["start","a","b","c","d","e"]
+    "listOfNode" : ["a","b","c","d","e"]
   
   }

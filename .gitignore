@@ -4,3 +4,4 @@ ask-resources.json
 lambda/node_modules
 .skill-package-backup
 node_modules
+*.zip

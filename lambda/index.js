@@ -1,19 +1,54 @@
 // This sample demonstrates handling intents from an Alexa skill using the Alexa Skills Kit SDK (v2).
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
+class GraphCrawler {
+
+    constructor(graph){
+        this.graph = graph;
+        this.GraphNode = graph.listOfNode[0];
+    }
+
+    next(userChoice){
+        let nodes = this.graph.nodes;
+        this.GraphNode = nodes[(this.GraphNode)].children[userChoice];
+    }
+
+    getReply(){
+        return (this.graph).nodes[(this.GraphNode)].reply;
+    }
+    
+    isSlotType(){
+        return (this.graph).nodes[(this.GraphNode)].isSlotType;
+    }
+    
+    getSlotValue(){
+        return (this.graph).nodes[(this.GraphNode)].slotValue;
+    }
+    
+    getNode(){
+        return (this.GraphNode);
+    }
+
+}
+
+
 const Alexa = require('ask-sdk-core');
+const { ConnectContactLens } = require('aws-sdk');
 const DAG = require('./graph.json');
-const GraphCrawler = require('./GraphCrawler');
+//const GraphCrawler = require('./GraphCrawler');
+let firstTime = true;
 
 //Global Graph Object for the User :
 let Graph ;
+let ucVar,bv; 
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome, you can say Hello or Help. Which would you like to try?';
+        firstTime = true;
+        const speakOutput = 'Welcome to Capital game, Its a demo skill for testing out the graph based traversals for user interaction, Say start it up to start the game';
         //Graph Object Instantiated: 
         Graph = new GraphCrawler(DAG);
         return handlerInput.responseBuilder
@@ -21,7 +56,7 @@ const LaunchRequestHandler = {
             .reprompt(speakOutput)
             .getResponse();
     }
-};
+};  
 
 
 //GraphInterceptor object is a request interceptor and it runs before every intent request from User, irrespective of the intent
@@ -29,17 +64,37 @@ const LaunchRequestHandler = {
 const GraphInterceptor = {
     process(handlerInput){
         if( Alexa.getRequestType(handlerInput.requestEnvelope) !== 'IntentRequest'
-        || Alexa.getIntentName(handlerInput.requestEnvelope) !== 'HelloToWorldIntent' ||
-        Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest'){return;}
-        
-        //Get the user choice from the request :
-        let userChoice = 'yes'; //right now it's hard coded as Yes only but can be dynamically fetched from the Request
-        
-        //The Graph next() method is called along with userChoice which changes the node to the required node
-        //based on the user choice:
-        Graph.next(userChoice);
-        return;
-
+        || Alexa.getIntentName(handlerInput.requestEnvelope) !== 'HelloToWorldIntent'
+        || Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest') {return;}
+        let req = Alexa.getRequest(handlerInput.requestEnvelope);
+        //console.log("req: ",req);
+        try{
+            if(firstTime){
+                firstTime = false;
+                return;
+            }
+            let node = Graph.getNode();
+            let userChoice = 'test';
+            bv = node.isSlotType;
+            console.log("bv :", Graph.isSlotType());
+            console.log("slot Value is : ", Graph.getSlotValue());
+            
+            if(Graph.isSlotType() === true){
+                console.log("the object is :", Alexa.getSlot(handlerInput.requestEnvelope, Graph.getSlotValue()));
+                userChoice = Alexa.getSlot(handlerInput.requestEnvelope, Graph.getSlotValue()).name;
+            }
+            else{
+                userChoice = Alexa.getSlotValue(handlerInput.requestEnvelope, Graph.getSlotValue());
+            }
+            //userChoice = Alexa.getSlot(handlerInput.requestEnvelope, "noValue").name;
+            ucVar = userChoice;
+            console.log('The user choice is : ', userChoice);
+            Graph.next(userChoice);
+            return; 
+        }
+        catch(error){
+            console.log("the error is " ,error);
+        }
     }
 };
 
@@ -54,13 +109,22 @@ const IntentHandler = {
         
         //This handler just goes to the Graph object that was instantiated with launch request and uses getReply()
         //Method to get the reply of current Graph node
-        const speakOutPut = Graph.getReply();
+        try{
+            const speakOutPut = Graph.getReply();
+            //if(firstTime){
+                //firstTime = false;
+                //let uc = Alexa.getSlotValue(handlerInput.requestEnvelope, "noValue");
+              //  Graph.next(uc);
+            //}
 
-
-        return handlerInput.responseBuilder
+            return handlerInput.responseBuilder
             .speak(speakOutPut)
             .reprompt('add a reprompt if you want to keep the session open for the user to respond')
             .getResponse();
+        }
+        catch(error){
+            console.log("the error here in handler: " , error);
+        }
     }
 };
 const HelloToWorldIntentHandler = {
@@ -141,7 +205,10 @@ const ErrorHandler = {
     },
     handle(handlerInput, error) {
         console.log(`~~~~ Error handled: ${error.stack}`);
-        const speakOutput = `Sorry, I had trouble doing what you asked. Please try again.`;
+        let check ;
+        if(bv=== null) check = "its do do do null" ;
+        else check = bv;
+        const speakOutput = check;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
